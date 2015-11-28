@@ -1,14 +1,5 @@
-smag = readAudios('Natalie singing without any music.mp3');
-test=smag{1};
-figure;
-imagesc(test);
-hold on
-%plot(1:size(test,2), average, 'g*');
-
+function [bestFit, fit] = findBaseFrequency(test, baseFLow, baseFHigh)
 %% find the spectrum by sliding window...
-spectrum = zeros(size(test,1),1); % need to determine this automatically
-spectrum(1:1000) = test(24:1023, 35);
-
 maxFit = zeros(size(test,2),1);
 minErr = ones(size(test,2),1)*100000;
 bestFit = zeros(size(test,2),1);
@@ -16,8 +7,8 @@ bestErr = zeros(size(test,2),1);
 fit = zeros(100, size(test,2));
 err=0;
 for i=1:size(test,2)
-    for baseF=20:80
-        kernel_spectrum = MakeKernelSpectrum(baseF, spectrum);
+    for baseF=baseFLow:baseFHigh
+        kernel_spectrum = MakeKernelSpectrum(baseF, test(:,1));
         %err = sum(bsxfun(@power, bsxfun(@minus, test(:,i), slidingwindow), 2));
         signalAtBaseF = bsxfun(@power, bsxfun(@times, test(:,i), kernel_spectrum), 2);
 
@@ -43,4 +34,4 @@ for i=1:size(test,2)
     end
 end
 
-plot(bestFit,'g.');
+% plot(bestFit,'g.');
